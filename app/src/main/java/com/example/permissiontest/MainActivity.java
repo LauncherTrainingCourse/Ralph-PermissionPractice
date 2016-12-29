@@ -168,10 +168,15 @@ public class MainActivity extends AppCompatActivity {
                 if (grandResults.length > 0 && grandResults[0] == PackageManager.PERMISSION_GRANTED && grandResults[1] == PackageManager.PERMISSION_GRANTED) {
                     takePhoto();
                 }
+                else if(grandResults[0] == PackageManager.PERMISSION_GRANTED)
+                    checkCamera = true;
+                else if(grandResults[1] == PackageManager.PERMISSION_GRANTED)
+                    checkLocation = true;
                 break;
 
             case 4:
                 if (grandResults.length > 0 && grandResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    checkCamera = true;
                     takePhoto();
                 }
                 break;
