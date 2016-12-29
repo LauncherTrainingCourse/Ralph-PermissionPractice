@@ -51,21 +51,24 @@ public class MainActivity extends AppCompatActivity {
     LocationManager locationManager;
     private Double longitude;
     private Double latitude;
-    private Boolean storagePermit;
+    private Boolean checkStorage;
     private Boolean checkLocation;
     private Boolean checkCamera;
     private String imageName;
+    public static final String STORAGE_PERMISSION =  Manifest.permission.WRITE_EXTERNAL_STORAGE;
+    public static final String LOCATION_PERMISSION =  Manifest.permission.ACCESS_FINE_LOCATION;
+    public static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        storagePermit = (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-        checkLocation = (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-        checkCamera = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        checkStorage = (ContextCompat.checkSelfPermission(getApplicationContext(), STORAGE_PERMISSION) == PackageManager.PERMISSION_GRANTED);
+        checkLocation = (ContextCompat.checkSelfPermission(getApplicationContext(), LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED);
+        checkCamera = (ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED);
 
-        if (!storagePermit)
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        if (!checkStorage)
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{STORAGE_PERMISSION}, 1);
 
         File storage = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "PermissionTest");
         if (!storage.exists()) {
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.startAnimation(myAnim);
-                if (!storagePermit)
+                if (!checkStorage)
                     Toast.makeText(getApplication(), "Please give the permission for read storage", Toast.LENGTH_SHORT).show();
                 else
                     openGallery();
@@ -96,10 +99,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.startAnimation(myAnim);
-                if (!storagePermit)
+                if (!checkStorage)
                     Toast.makeText(getApplication(), "Please give the permission for read storage", Toast.LENGTH_SHORT).show();
                 else if (!checkLocation)
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 2);
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{LOCATION_PERMISSION}, 2);
                 else
                     showNearPhoto();
             }
@@ -111,14 +114,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 v.startAnimation(myAnim);
-                if (!storagePermit)
+                if (!checkStorage)
                     Toast.makeText(getApplication(), "Please give the permission for read storage", Toast.LENGTH_SHORT).show();
                 else if (!checkCamera && !checkLocation)
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION}, 3);
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{CAMERA_PERMISSION, LOCATION_PERMISSION}, 3);
                 else if (!checkCamera)
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 4);
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{CAMERA_PERMISSION}, 4);
                 else if (!checkLocation)
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 5);
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{LOCATION_PERMISSION}, 5);
                 else
                     takePhoto();
             }
@@ -132,9 +135,9 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case 1: {
                 if (grandResults.length > 0 && grandResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    storagePermit = true;
+                    checkStorage = true;
                 } else {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, STORAGE_PERMISSION)) {
                         new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("Warning")
                                 .setMessage("If you don't approve this permission.\nYou can't use all function")
@@ -142,14 +145,14 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
-                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{STORAGE_PERMISSION}, 1);
                                     }
                                 })
                                 .setNegativeButton("NOOOOO!!", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
-                                        storagePermit = false;
+                                        checkStorage = false;
                                     }
                                 }).show();
                     }
