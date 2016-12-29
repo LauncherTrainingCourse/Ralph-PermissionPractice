@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">"PermissionPractice "</string>
+    <string name="imageView_description">"ShowPhoto"</string>
+    <string name="button1_text">"Open Album"</string>
+    <string name="button2_text">"Location Photos"</string>
+    <string name="button3_text">"Take A Photo"</string>
+</resources>
