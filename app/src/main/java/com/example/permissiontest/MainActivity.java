@@ -42,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static java.lang.Math.abs;
 import static java.lang.Math.min;
 
 public class MainActivity extends AppCompatActivity {
@@ -304,6 +305,21 @@ public class MainActivity extends AppCompatActivity {
         getLocation();
         try {
             ExifInterface exif = new ExifInterface(currentPhotoPath);
+
+            if (latitude > 0)
+                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
+            else {
+                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "S");
+                latitude = abs(latitude);
+            }
+
+            if (longitude > 0)
+                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
+            else {
+                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "W");
+                longitude = abs(longitude);
+            }
+
             int num1Lat = (int) Math.floor(latitude);
             int num2Lat = (int) Math.floor((latitude - num1Lat) * 60);
             double num3Lat = (latitude - ((double) num1Lat + ((double) num2Lat / 60))) * 3600000;
@@ -315,15 +331,6 @@ public class MainActivity extends AppCompatActivity {
             exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE, num1Lat + "/1," + num2Lat + "/1," + num3Lat + "/1000");
             exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE, num1Lon + "/1," + num2Lon + "/1," + num3Lon + "/1000");
 
-            if (latitude > 0)
-                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "N");
-            else
-                exif.setAttribute(ExifInterface.TAG_GPS_LATITUDE_REF, "S");
-
-            if (longitude > 0)
-                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "E");
-            else
-                exif.setAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF, "W");
             exif.saveAttributes();
             Log.d("GPS Info", Double.toString(latitude) + "  " + Double.toString(longitude));
         } catch (IOException e) {

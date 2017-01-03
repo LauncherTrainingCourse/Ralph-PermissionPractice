@@ -67,8 +67,10 @@ public class ShowNearPhoto extends AppCompatActivity {
             ExifInterface exi = new ExifInterface(path);
             String lat_data = exi.getAttribute(ExifInterface.TAG_GPS_LATITUDE);
             String lon_data = exi.getAttribute(ExifInterface.TAG_GPS_LONGITUDE);
-            double photo_lat = convertToDegree(lat_data);
-            double photo_lon = convertToDegree(lon_data);
+            String lat_ref = exi.getAttribute(ExifInterface.TAG_GPS_LATITUDE_REF);
+            String lon_ref = exi.getAttribute(ExifInterface.TAG_GPS_LONGITUDE_REF);
+            double photo_lat = convertToDegree(lat_data, lat_ref);
+            double photo_lon = convertToDegree(lon_data, lon_ref);
             Log.d("Photo Name", path);
             Log.d("lat_current", Double.toString(latitude));
             Log.d("lon_current", Double.toString(longitude));
@@ -131,7 +133,7 @@ public class ShowNearPhoto extends AppCompatActivity {
         }
     }
 
-    private double convertToDegree(String input) {
+    private double convertToDegree(String input, String ref) {
         Double result;
         String[] DMS = input.split(",", 3);
         String[] stringD = DMS[0].split("/", 2);
@@ -150,6 +152,9 @@ public class ShowNearPhoto extends AppCompatActivity {
         Double S = S0 / S1;
 
         result = D + (M / 60) + (S / 3600);
+
+        if(ref.equals("S") || ref.equals("W"))
+            result = 0 - result;
 
         return result;
     }
